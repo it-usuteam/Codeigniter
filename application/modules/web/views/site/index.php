@@ -6,6 +6,9 @@
 	<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css"> -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<style>
+		* {
+			transition: all 0.5 ease;
+		}
 		.menu-fix {
 			width: 100%;
 			position: fixed;
@@ -17,8 +20,37 @@
 		.menu-fix .menu-item, .welcome-message {
 			display: inline-block;
 			padding: 1em;
+			position: relative;
 		}
 		.menu-fix .menu-item:hover { background: #FFF; }
+		/* Fixed Navigation */
+		.menu-box {
+			background: #EEE;
+			padding: 1em;
+			position: absolute;
+			transform: translateY(1em);
+			right: 0;
+			visibility: hidden;
+		}
+		#accountTab:hover #accountBox, #accountBox:hover, #accountBox:focus {
+			visibility: visible;
+		}
+		#accountBox {
+			min-width: 20vw;
+			padding:0.5em;
+		}
+		#accountBox input {
+			width: 100%;
+			padding: 0.5em;
+			margin: 0.5em auto;
+			box-shadow: none;
+			display:block;
+			border: 0.2em solid transparent;
+		}
+		#accountBox input:focus {
+			border: 0.2em solid #3BB0AA;
+		}
+		#accountBox input[type=submit] { background: #FFF;}
 		.search-input-container {
 			display: inline-block;
 			padding-left: 1em;
@@ -45,48 +77,6 @@
 			color: #FFF;
 			width: 100%;
 		}
-		.navigation-row { }
-		.navigation-row ul {
-			display: block;
-			background : #3BB0AA; 
-			padding: 0;
-			margin: 0;
-			list-style-type: none;
-			width: 100%;
-		}
-		.navigation-row ul a {
-			display: inline-block;
-			padding: 1em;
-			color: #FFF;
-			font-size: 1.2em;
-		}
-		.navigation-row .current-page { background: #3C3E3D; position: relative; }
-		.navigation-row .current-page:before {
-			content: "";
-			float:left;
-			margin-top: -1.5em;
-			margin-right: 2em;
-			margin-left: -1em;
-			display: block;
-			height: 1em;
-			padding: 1em;
-			width: calc(100% + 2em);
-			background: #3C3E3D;
-		}
-		/*
-		.navigation-row .current-page:after {
-			content:"\25BC";
-			display: block;
-			width: 100%;
-			color: #3C3E3D;
-			position: absolute;
-			top: 100%;
-			left: -0.15em;
-			line-height: 0;
-			font-size: 9vw;
-		}
-		*/
-		.navigation-row ul a .nav-icon { font-size: 1.5em; display: block; }
 	</style>
 </head>
 <body>
@@ -94,11 +84,42 @@
 		<!-- Header teratas, fixed -->
 		<div class="menu-fix">
 			<div class="col-xs-12 text-right">
-				<span class="menu-item">Bahasa <span class="glyphicon glyphicon-menu-down"></span></span>
-				<span class="menu-item">Akun <span class="glyphicon glyphicon-menu-down"></span></span>
+				<span class="menu-item" id="langTab">Bahasa <span class="glyphicon glyphicon-menu-down"></span></span>
+				<span class="menu-item" id="accountTab">
+					Akun <span class="glyphicon glyphicon-menu-down"></span>
+					<div class="menu-box text-center" id="accountBox">
+						<?php
+							if(!isset($user) || is_null($user)) {
+								echo form_open('web/login/process');
+								echo form_input([
+									'name' => 'username',
+									'id'   => 'field_username',
+									'placeholder' => 'Username',
+									'maxLength' => '30',
+									'required' => 'true',
+								]);
+								echo form_password([
+									'name' => 'password',
+									'id' => 'field_password',
+									'placeholder' => 'Password',
+									'maxLength' => '64',
+									'required' => 'true',
+								]);
+								echo form_submit('login_submit', "Log In");
+								echo form_close();
+							} else {
+								// TODO Style this box.
+								?>
+						<h4><?php echo $user['fullname'] ?></h4>
+						<h5><?php echo $user['username'] ?></h5>
+						<a class="btn btn-primary" type=button href="<?php echo site_url("web/login/signout") ?>">Sign Out</a>
+								<?php
+							}
+						?>
+					</div>
 			</div>
 		</div>
-		
+
 		<!-- Header awal -->
 		<div class="row" style="padding-top:4em; padding-bottom: 2em; ">
 			<div class="col-md-12 text-center">
@@ -106,28 +127,6 @@
 					<input type="text" placeholder="Cari...." class="search-input">
 				</form>
 			</div>
-		</div>
-		
-		<!-- Navigasi -->
-		<div class="row navigation-row">
-			<ul class="text-center">
-				<a href="#" class="current-page"><li>
-					<div class="nav-icon"><span class="glyphicon glyphicon-home"></span></div>
-					Home
-				</li></a>
-				<a href="#"><li>
-					<div class="nav-icon"><span class="glyphicon glyphicon-certificate"></span></div>
-					Profil
-				</li></a>
-				<a href="#"><li>
-					<div class="nav-icon"><span class="glyphicon glyphicon-calendar"></span></div>
-					Events
-				</li></a>
-				<a href="#"><li>
-					<div class="nav-icon"><span class="glyphicon glyphicon-credit-card"></span></div>
-					Berita
-				</li></a>
-			</ul>
 		</div>
 	</div>
 </body>
