@@ -11,9 +11,9 @@ INSERT INTO role VALUES
 
 CREATE TABLE users (
      id int primary key auto_increment,
-     username varchar(20) NOT NULL,
+     username varchar(20) UNIQUE NOT NULL,
      fullname varchar(100) NOT NULL,
-     email varchar(100) NOT NULL,
+     email varchar(100) UNIQUE NOT NULL,
      pass varchar(64) NOT NULL,
      role int NOT NULL DEFAULT 4,
      activation_key varchar(64) UNIQUE,
@@ -22,21 +22,21 @@ CREATE TABLE users (
      constraint foreign key (role) references role(id)
 );
 CREATE TABLE category (
-     id int primary key auto_increment, 
+     id int primary key auto_increment,
      name varchar(100),
      slug varchar(30),
      parent_id int default 0
 );
 
 CREATE TABLE post (
-     id int primary key auto_increment, 
+     id int primary key auto_increment,
      user_id int,
      time_created datetime DEFAULT CURRENT_TIMESTAMP ,
      time_modified timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      title varchar(100),
      content text,
      pass varchar(50),
-     slug varchar(30),
+     slug varchar(30) UNIQUE,
      comment_status tinyint,
      post_status tinyint,
      constraint foreign key (user_id) references users(id) ON DELETE SET NULL ON UPDATE CASCADE
@@ -51,19 +51,19 @@ CREATE TABLE post_category (
 );
 
 CREATE TABLE page (
-     id int primary key auto_increment, 
+     id int primary key auto_increment,
      user_id int,
      time_created datetime DEFAULT CURRENT_TIMESTAMP ,
      time_modified timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
      title varchar(100),
      content text,
-     slug varchar(30),
+     slug varchar(30) ,
      page_order int,
      post_status bit,
      constraint foreign key (user_id) references users(id) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
-CREATE TABLE comments ( 
+CREATE TABLE comments (
      id int primary key auto_increment,
      user_id int,
      post_id int,
@@ -75,10 +75,10 @@ CREATE TABLE comments (
 );
 
 CREATE TABLE events (
-     id int primary key auto_increment,
-	 title varchar(256) not null,
-	 description text,
-     place_name text,
-     scheduled_time datetime,
-	 finished_time datetime
+  id int primary key auto_increment,
+  title varchar(256) not null,
+  description text,
+  place_name text,
+  scheduled_time datetime,
+  finished_time datetime
 );

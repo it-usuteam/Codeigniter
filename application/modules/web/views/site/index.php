@@ -39,18 +39,18 @@
 			min-width: 20vw;
 			padding:0.5em;
 		}
-		#accountBox input {
+		#accountBox input, .loginbutton {
 			width: 100%;
 			padding: 0.5em;
 			margin: 0.5em auto;
 			box-shadow: none;
 			display:block;
 			border: 0.2em solid transparent;
+			background: #FFF;
 		}
 		#accountBox input:focus {
 			border: 0.2em solid #3BB0AA;
 		}
-		#accountBox input[type=submit] { background: #FFF;}
 		.search-input-container {
 			display: inline-block;
 			padding-left: 1em;
@@ -105,14 +105,25 @@
 									'maxLength' => '64',
 									'required' => 'true',
 								]);
-								echo form_submit('login_submit', "Log In");
+								echo form_submit([
+									'name' => 'login_submit',
+									'class' => 'loginbutton',
+									'value' => "Log In",
+								]);
+								echo form_button([
+									'name' => 'signup_button',
+									'content' => "Sign Up",
+									'class' => 'loginbutton',
+									'style' => "background-color: #5F94E3;color: #EEE;",
+									'onClick' => "location.href = '".site_url('web/login/signup_login')."'",
+								]);
 								echo form_close();
 							} else {
 								// TODO Style this box.
 								?>
 						<h4><?php echo $user['fullname'] ?></h4>
 						<h5><?php echo $user['username'] ?></h5>
-						<a class="btn btn-primary" type=button href="<?php echo site_url("web/login/signout") ?>">Sign Out</a>
+						<a class="loginbutton" style="background: #EC3838; color: #FFF; " type=button href="<?php echo site_url("web/login/signout") ?>">Sign Out</a>
 								<?php
 							}
 						?>

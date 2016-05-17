@@ -11,3 +11,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
+
+
+$hook['pre_controller'][] = [
+  'class' => 'Login',
+  'function' => 'check_access',
+  'filename' => 'login.php',
+  'filepath' => 'modules/web/controllers',
+];

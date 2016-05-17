@@ -1,7 +1,7 @@
 <?php
 
 class User_model extends CI_Model {
-  private $username, $fullname, $email, $pass, $role, $activationKey, $forgot_key, $registered_on;
+  public $username, $fullname, $email, $pass, $role, $activation_key, $forgot_key, $registered_on;
 
   public function __construct() {
     parent::__construct();
@@ -42,6 +42,58 @@ class User_model extends CI_Model {
     if(! is_null($this->pass))
       return password_verify($password, $this->pass);
     return FALSE;
+  }
+
+  public function generate_password($password) {
+    $password = $this->db->escape($password);
+    return password_hash($password, PASSWORD_BCRYPT, ['cost' => 9]);
+  }
+
+  // Code for activation key are acquired
+  // from http://stackoverflow.com/questions/3290283/what-is-a-good-way-to-produce-a-random-site-salt-to-be-used-in-creating-passwo/3291689#3291689
+  public function generate_activation_key() {
+    $charset = '12345987ABCEFHKLMNQOPSTVWXYZabthefoxyesabcdghijklmnpqrzuvr';
+    $token = "";
+    for($i = 0; $i < 62; $i++) {
+      $token .= $charset[$this->randomize_key(0, strlen($charset))];
+    }
+    return $token;
+  }
+
+  private function randomize_key($min, $max) {
+    if($max - $min < 0) return $min;
+    $log = log($max-$min, 2);
+    $bytes = (int) $log / 8 + 1;
+    $filter = (int) (1 << (intval($log) + 1)) - 1;
+    do {
+      $rnd = hexdec(bin2hex(openssl_random_pseudo_bytes($bytes)));
+      $rnd = $rnd & $filter;
+    } while($rnd >= ($max - $min));
+    return $min + $rnd;
+  }
+
+  public function save_new_user() {
+    $old = $this->db->db_debug;
+    $this->db->db_debug = FALSE;
+    // TODO AUTO_INCREMENT always return last user id + sign up attemp, fix this.
+    $this->db->trans_start();
+    $this->db->simple_query("ALTER TABLE users SET AUTO_INCREMENT = 1");
+    $query = $this->db->insert('users', [
+        'username' => $this->username,
+        'fullname' => $this->fullname,
+        'email'    => $this->email,
+        'pass'     => $this->password,
+        'role'     => $this->role,
+        'activation_key' => $this->activation_key,
+    ]);
+    $this->db->db_debug = $old;
+    if($this->db->affected_rows() > 0 && $this->db->error()['code'] == 0 && $this->db->trans_status() == TRUE) {
+      $this->db->trans_commit();
+      return true;
+    } else {
+      $this->db->trans_rollback();
+      return $this->db->error();
+    }
   }
 
   // public function init_admin() {
