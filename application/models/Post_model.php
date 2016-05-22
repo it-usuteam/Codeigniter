@@ -2,6 +2,7 @@
 
 class Post_model extends CI_Model {
   public $id, $username, $title, $content, $pass, $slug, $comment_enabled, $post_enabled, $created, $modified;
+  public $categories;
 
   public function __construct($slug = NULL) {
     parent::__construct();
@@ -27,6 +28,12 @@ class Post_model extends CI_Model {
           $this->modified = $result->time_modified;
           $this->comment_enabled = $result->comment_status;
           $this->post_enabled = $result->post_status;
+          $cat_query = $this->db->query('SELECT id FROM post_category WHERE post_id = ?', $this->id);
+          if($cat_query->num_rows() > 0) {
+            foreach($query->result() as $res) {
+              $categories[] = $res->id;
+            }
+          }
           return TRUE;
       }
     }
@@ -61,5 +68,50 @@ class Post_model extends CI_Model {
     else {
       return false;
     }
+  }
+
+  public function save_entries() {
+    if(empty($this->id) && !empty($this->slug) && !empty($this->title)) {
+      $this->db->trans_start();
+      $query = $this->db->query('INSERT INTO post(title, content, pass, slug, post_status,
+        comment_status, user_id) VALUES(?, ?, ?, ?, ?, ?, (SELECT id FROM users WHERE username = ?))', [
+        $this->title, $this->content, $this->pass, $this->slug, $this->post_enabled, $this->comment_enabled, $this->username,
+      ]);
+      if($this->db->affected_rows() > 0 && $this->db->error()['code'] == 0 && $this->db->trans_status() == TRUE) {
+        $new_id = $this->db->insert_id();
+        if(is_array($this->categories)) {
+          foreach($this->categories as $category) {
+            $this->db->insert('post_category', [
+              'post_id' => $new_id,
+              'category_id' => $category,
+            ]);
+          }
+        }
+        if($this->db->trans_status() && $this->db->error()['code'] == 0) {
+          $this->db->trans_commit();
+          $this->fill_model($new_id);
+          return TRUE;
+        } else {
+          $this->db->trans_rollback();
+          return $this->db->error();
+        }
+      }
+    }
+    return FALSE;
+  }
+
+  public static function delete_entry($slug) {
+      $ci =& get_instance();
+      $ci->load->database();
+      $ci->db->trans_start();
+      $query = $ci->db->query('DELETE FROM post WHERE slug = ?', [$slug]);
+      if($ci->db->trans_status()) {
+        $ci->db->trans_commit();
+        return TRUE;
+      }
+      else {
+        $ci->db->trans_rollback();
+        return FALSE;
+      }
   }
 }

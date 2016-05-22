@@ -92,7 +92,7 @@
                   'id'   => 'field_password',
                   'class' => 'form-object',
                   'placeholder' => 'Password',
-                  'pattern' => '.{7,10}',
+                  'pattern' => '.{7,}',
                   'required' => '',
                 ]);
                 echo form_submit([
@@ -147,6 +147,7 @@
                   'id'   => 'field_password',
                   'class' => 'form-object',
                   'placeholder' => 'Password',
+                  'pattern' => '.{7,}',
                   'required' => '',
                 ]);
                 echo form_submit([

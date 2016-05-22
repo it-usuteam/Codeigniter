@@ -64,7 +64,7 @@
 <div class="container-fluid">
      <div class="row">
           <div class="col-md-12">
-               <h1>Posts <a href="<?php echo site_url('admin/post/create') ?>"><span style="font-size: 0.5em; vertical-align: middle;" class="glyphicon glyphicon-plus"></span></a></h1>
+               <h1>Posts <a href="<?php echo site_url('admin/posts/create') ?>"><span style="font-size: 0.5em; vertical-align: middle;" class="glyphicon glyphicon-plus"></span></a></h1>
           </div>
      </div>
      <div class="row">

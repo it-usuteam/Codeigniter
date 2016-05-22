@@ -91,9 +91,11 @@
 			$this->load->helper('url');
 			$user_model = new User_model();
 			$user_load = $user_model->fill_model($this->session->userdata('username'));
-			if($this->router->fetch_module() == 'admin' && ($user_load == false || $user_model->role == 4)) {
-				show_error("You are not allowed to access this page. Please contact administrator for solution. ", 403, 'Restricted Access');
-				exit();
+			if($this->router->fetch_module() == 'admin') {
+				if(! $this->is_logged())
+					redirect('web/login/signup_login');
+				else if ($user_load == false || $user_model->role == 4)
+					show_error("You are not allowed to access this page. Please contact administrator for solution. ", 403, 'Restricted Access');
 			}
 		}
 	}
