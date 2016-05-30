@@ -87,7 +87,7 @@
                                 echo "<tr>";
                                 echo "<td data-th='ID'><div>".strip_tags(htmlspecialchars_decode($data->id, ENT_QUOTES))."</div></td>";
                                 echo "<td data-th='Title'><div>".strip_tags(htmlspecialchars_decode($data->title, ENT_QUOTES))."</div></td>";
-                                echo "<td data-th='Short Content'><div>".strip_tags(htmlspecialchars_decode($data->content, ENT_QUOTES))."</div></td>";
+                                echo "<td data-th='Short Content'><div>".strip_tags(htmlspecialchars_decode(substr($data->content, 0, 150), ENT_QUOTES))."</div></td>";
                                 echo "<td data-th='Slug'><div>".strip_tags(htmlspecialchars_decode($data->slug, ENT_QUOTES))."</div></td>";
                                 echo "<td data-th='Posted'><div>".($data->is_posted() == 1 ? "Yes" : "No")."</div></td>";
                                 echo "<td data-th='Comments'><div>".($data->is_comment_enabled () == 1 ? "Yes" : "No")."</div></td>";

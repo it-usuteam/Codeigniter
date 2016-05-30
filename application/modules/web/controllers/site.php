@@ -24,9 +24,12 @@
 			else
 				$user = NULL;
 			$this->load->helper('form');
-			$this->load->view("web/site/index", [
+			$view = $this->load->view("web/site/index", [
 					'user' => $user,
-				]);
+				], TRUE);
+			$this->load->view('web/layout/container_main', [
+				'content' => $view,
+			]);
 			$this->session->set_flashdata('prev_dest', $this->router->fetch_module().'/'.
 				$this->router->fetch_class().'/'.$this->router->fetch_method());
 		}

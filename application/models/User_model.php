@@ -39,8 +39,11 @@ class User_model extends CI_Model {
   }
 
   public function verify_password($password) {
-    if(! is_null($this->pass))
+    $password = $this->db->escape($password);
+    if(! is_null($this->pass)) {
+      var_dump($password);
       return password_verify($password, $this->pass);
+    }
     return FALSE;
   }
 
@@ -94,6 +97,15 @@ class User_model extends CI_Model {
       $this->db->trans_rollback();
       return $this->db->error();
     }
+  }
+
+  public function get_role_name() {
+    if(!(is_null($this->role) || empty($this->role))) {
+      $query = $this->db->get_where('role',[ 'id' => $this->role, ]);
+      if($query->num_rows() > 0)
+        return $query->result()[0]->name;
+    }
+    return FALSE;
   }
 
   // public function init_admin() {
